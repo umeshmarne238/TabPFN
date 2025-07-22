@@ -118,7 +118,7 @@ class LayerStack(nn.Module):
                 x = checkpoint(partial(layer, **kwargs), x, use_reentrant=False)
             else:
                 x = layer(x, **kwargs)
-
+        print(" Get_embeddings function is called ")
         return x  # These are the final hidden representations (z_i)
 
 
