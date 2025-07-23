@@ -437,7 +437,7 @@ class SeqEncStep(nn.Module):
     def forward(
         self,
         state: dict,
-        cache_trainset_representation: bool = False,
+        cache_trainset_representation_flag: bool = False,
         **kwargs: Any,
     ) -> dict:
         """Perform the forward pass of the encoder step.
@@ -458,7 +458,7 @@ class SeqEncStep(nn.Module):
                 self._fit(*args, **kwargs)
             out = self._transform(*args, **kwargs)
         else:
-            assert not cache_trainset_representation
+            assert not cache_trainset_representation_flag
             out = self._forward(*args, **kwargs)
             # TODO: I think nothing is using _forward now
 
