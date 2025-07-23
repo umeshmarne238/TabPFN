@@ -647,6 +647,12 @@ class TabPFNClassifier(ClassifierMixin, BaseEstimator):
             inference_mode=not self.differentiable_input,
         )
 
+        '''
+        As transformer is buried inside nternal executor_ object, which is not directly accessible from the TabPFNClassifier instance (your model). 
+        To extract embeddings from the Transformer via get_embeddings(), we need a direct access to transformer model.
+        '''
+        self.transformer_model = self.executor_.transformer
+
         return self
 
     def _raw_predict(self, X: XType, *, return_logits: bool) -> torch.Tensor:
