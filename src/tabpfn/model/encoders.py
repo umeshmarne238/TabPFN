@@ -454,7 +454,7 @@ class SeqEncStep(nn.Module):
         """
         args = [state[in_key] for in_key in self.in_keys]
         if hasattr(self, "_fit"):
-            if kwargs["single_eval_pos"] or not cache_trainset_representation:
+            if kwargs["single_eval_pos"] or not cache_trainset_representation_flag:
                 self._fit(*args, **kwargs)
             out = self._transform(*args, **kwargs)
         else:
