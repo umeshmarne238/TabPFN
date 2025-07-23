@@ -159,7 +159,7 @@ class PerFeatureTransformer(nn.Module):
         precomputed_kv: (
             list[torch.Tensor | tuple[torch.Tensor, torch.Tensor]] | None
         ) = None,
-        cache_trainset_representation: bool = False,
+        cache_trainset_representation_flag: bool = False,
         # TODO: List explicitly
         **layer_kwargs: Any,
     ):
@@ -230,7 +230,7 @@ class PerFeatureTransformer(nn.Module):
         self.nhid_factor = config.nhid_factor
         nhid = self.ninp * self.nhid_factor
         self.features_per_group = config.features_per_group
-        self.cache_trainset_representation = cache_trainset_representation
+        self.cache_trainset_representation_flag = cache_trainset_representation_flag
         self.cached_embeddings: torch.Tensor | None = None
 
         layer_creator = lambda: PerFeatureEncoderLayer(
@@ -446,7 +446,7 @@ class PerFeatureTransformer(nn.Module):
             A dictionary of output tensors.
         """
         assert style is None
-        if self.cache_trainset_representation:
+        if self.cache_trainset_representation_flag:
             if not single_eval_pos:  # none or 0
                 assert y is None
         else:
@@ -573,7 +573,7 @@ class PerFeatureTransformer(nn.Module):
         embedded_y = self.y_encoder(
             y,
             single_eval_pos=single_eval_pos_,
-            cache_trainset_representation=self.cache_trainset_representation,
+            cache_trainset_representation_flag=self.cache_trainset_representation_flag,
         ).transpose(0, 1)
 
         del y
@@ -598,7 +598,7 @@ class PerFeatureTransformer(nn.Module):
             self.encoder(
                 x,
                 single_eval_pos=single_eval_pos_,
-                cache_trainset_representation=self.cache_trainset_representation,
+                cache_trainset_representation_flag = self.cache_trainset_representation_flag,
                 **extra_encoders_args,
             ),
             "s (b f) e -> b s f e",
@@ -613,10 +613,10 @@ class PerFeatureTransformer(nn.Module):
             num_features=num_features,
             seq_len=seq_len,
             cache_embeddings=(
-                self.cache_trainset_representation and single_eval_pos is not None
+                self.cache_trainset_representation_flag and single_eval_pos is not None
             ),
             use_cached_embeddings=(
-                self.cache_trainset_representation and single_eval_pos is None
+                self.cache_trainset_representation_flag and single_eval_pos is None
             ),
         )
         del data_dags
@@ -641,7 +641,7 @@ class PerFeatureTransformer(nn.Module):
             ),
             single_eval_pos=single_eval_pos,
             half_layers=half_layers,
-            cache_trainset_representation=self.cache_trainset_representation,
+            cache_trainset_representation_flag=self.cache_trainset_representation_flag,
         )  # b s f+1 e -> b s f+1 e
 
         # If we are using a decoder
