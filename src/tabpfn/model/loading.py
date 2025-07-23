@@ -431,7 +431,7 @@ def load_model_criterion_config(
             ) from res[0]
 
     loaded_model, criterion, config = load_model(path=model_path)
-    loaded_model.cache_trainset_representation = cache_trainset_representation
+    loaded_model.cache_trainset_representation_flag = cache_trainset_representation_flag
     if check_bar_distribution_criterion and not isinstance(
         criterion,
         FullSupportBarDistribution,
