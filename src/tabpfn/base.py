@@ -140,7 +140,7 @@ def initialize_tabpfn_model(
             model, _, config = load_model_criterion_config(
                 model_path=model_path,
                 check_bar_distribution_criterion=False,
-                cache_trainset_representation=(fit_mode == "fit_with_cache"),
+                cache_trainset_representation_flag=(fit_mode == "fit_with_cache"),
                 which="classifier",
                 version="v2",
                 download=download,
@@ -151,7 +151,7 @@ def initialize_tabpfn_model(
             model, bardist, config = load_model_criterion_config(
                 model_path=model_path,
                 check_bar_distribution_criterion=True,
-                cache_trainset_representation=(fit_mode == "fit_with_cache"),
+                cache_trainset_representation_flag=(fit_mode == "fit_with_cache"),
                 which="regressor",
                 version="v2",
                 download=download,
