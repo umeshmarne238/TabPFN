@@ -265,7 +265,7 @@ class PerFeatureEncoderLayer(Module):
         state: Tensor,
         single_eval_pos: int | None = None,
         *,
-        cache_trainset_representation_flag: bool = False,
+        cache_trainset_representation: bool = False,
         att_src: Tensor | None = None,
     ) -> Tensor:
         """Pass the input through the encoder layer.
@@ -299,7 +299,7 @@ class PerFeatureEncoderLayer(Module):
             single_eval_pos = 0
 
         save_peak_mem_factor = self.save_peak_mem_factor
-        if cache_trainset_representation_flag and not single_eval_pos:
+        if cache_trainset_representation and not single_eval_pos:
             assert self.self_attn_between_items.has_cached_kv
             save_peak_mem_factor = None
 
@@ -307,14 +307,14 @@ class PerFeatureEncoderLayer(Module):
             assert (
                 not self.multiquery_item_attention_for_test_set
             ), "Not implemented yet."
-            assert not cache_trainset_representation_flag, "Not implemented yet."
+            assert not cache_trainset_representation, "Not implemented yet."
             assert not single_eval_pos, (
                 "single_eval_pos should not be set, as the train representation"
                 " is in att_src"
             )
 
         if self.self_attn_between_features is None:
-            assert not cache_trainset_representation_flag, "Not implemented yet."
+            assert not cache_trainset_representation, "Not implemented yet."
             assert state.shape[2] == 1, (
                 f"One group architecture expects one feature group, "
                 f"but got {state.shape[2]} feature groups."
@@ -355,7 +355,7 @@ class PerFeatureEncoderLayer(Module):
                         x[:, :single_eval_pos].transpose(1, 2),
                         x[:, :single_eval_pos].transpose(1, 2),
                         save_peak_mem_factor=save_peak_mem_factor,
-                        cache_kv=cache_trainset_representation_flag,
+                        cache_kv=cache_trainset_representation,
                         only_cache_first_head_kv=True,
                         add_input=True,
                         allow_inplace=True,
@@ -379,10 +379,10 @@ class PerFeatureEncoderLayer(Module):
                 x.transpose(1, 2),
                 attention_src_x,
                 save_peak_mem_factor=save_peak_mem_factor,
-                cache_kv=cache_trainset_representation_flag and single_eval_pos,
+                cache_kv=cache_trainset_representation and single_eval_pos,
                 add_input=True,
                 allow_inplace=True,
-                use_cached_kv=cache_trainset_representation_flag and not single_eval_pos,
+                use_cached_kv=cache_trainset_representation and not single_eval_pos,
             ).transpose(1, 2)
 
         mlp_save_peak_mem_factor = (
