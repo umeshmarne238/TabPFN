@@ -349,7 +349,7 @@ def load_model_criterion_config(
     model_path: str | Path | None,
     *,
     check_bar_distribution_criterion: Literal[False],
-    cache_trainset_representation_flag: bool,
+    cache_trainset_representation: bool,
     version: Literal["v2"],
     which: Literal["classifier"],
     download: bool,
@@ -365,7 +365,7 @@ def load_model_criterion_config(
     model_path: str | Path | None,
     *,
     check_bar_distribution_criterion: Literal[True],
-    cache_trainset_representation_flag: bool,
+    cache_trainset_representation: bool,
     version: Literal["v2"],
     which: Literal["regressor"],
     download: bool,
@@ -376,7 +376,7 @@ def load_model_criterion_config(
     model_path: None | str | Path,
     *,
     check_bar_distribution_criterion: bool,
-    cache_trainset_representation_flag: bool,
+    cache_trainset_representation: bool,
     which: Literal["regressor", "classifier"],
     version: Literal["v2"] = "v2",
     download: bool,
@@ -431,7 +431,7 @@ def load_model_criterion_config(
             ) from res[0]
 
     loaded_model, criterion, config = load_model(path=model_path)
-    loaded_model.cache_trainset_representation_flag = cache_trainset_representation_flag
+    loaded_model.cache_trainset_representation = cache_trainset_representation
     if check_bar_distribution_criterion and not isinstance(
         criterion,
         FullSupportBarDistribution,
@@ -641,7 +641,7 @@ def load_model_from_config(
             nan_handling_y_encoder=config.nan_handling_y_encoder,
             max_num_classes=config.max_num_classes,
         ),
-        cache_trainset_representation_flag=load_for_inference,
+        cache_trainset_representation=load_for_inference,
         use_encoder_compression_layer=False,
         n_out=get_n_out(config, loss_criterion),
         #
