@@ -90,37 +90,6 @@ class LayerStack(nn.Module):
 
         return x
 
-    def get_embedding(
-        self,
-        x: torch.Tensor,
-        *,
-        half_layers: bool = False,
-        **kwargs: Any,
-    ) -> torch.Tensor:
-        """
-        Computes and returns the final hidden layer embeddings (z_i) for each input x.
-        These embeddings can be used for clustering or other downstream tasks.
-        """
-        if half_layers:
-            assert (
-                self.min_num_layers_layer_dropout == self.num_layers
-            ),  "half_layers only works without layer dropout"
-            n_layers = self.num_layers // 2
-        else:
-            n_layers = torch.randint(
-                low=self.min_num_layers_layer_dropout,
-                high=self.num_layers + 1,
-                size=(1,),
-            ).item()
-
-        for layer in self.layers[:n_layers]:
-            if self.recompute_each_layer and x.requires_grad:
-                x = checkpoint(partial(layer, **kwargs), x, use_reentrant=False)
-            else:
-                x = layer(x, **kwargs)
-
-        return x  # These are the final hidden representations (z_i)
-
 
 class PerFeatureTransformer(nn.Module):
     """A Transformer model processes a token per feature and sample.
