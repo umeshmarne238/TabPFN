@@ -735,6 +735,11 @@ class TabPFNClassifier(ClassifierMixin, BaseEstimator):
         # going from torch to numpy
         return output / output.sum(axis=1, keepdims=True)  # type: ignore
 
+    def get_representation(self, X: np.ndarray) -> torch.Tensor:
+        X_tensor = torch.tensor(X, dtype=torch.float32, device=self.device_)
+        z_i = self.transformer_model.get_embedding(X_tensor, categorical_inds=[])
+        return z_i
+
     def _apply_temperature(self, logits: torch.Tensor) -> torch.Tensor:
         """Scales logits by the softmax temperature."""
         if self.softmax_temperature != 1.0:
