@@ -736,8 +736,15 @@ class TabPFNClassifier(ClassifierMixin, BaseEstimator):
         return output / output.sum(axis=1, keepdims=True)  # type: ignore
 
     def get_representation(self, X: np.ndarray) -> torch.Tensor:
-        X_tensor = torch.tensor(X, dtype=torch.float32, device=self.device_)
-        z_i = self.transformer_model.get_embedding(X_tensor, categorical_inds=[])
+        X_tensor = torch.tensor(X, dtype=torch.float32)
+        if self.device_ == "cuda":
+            X_tensor = X_tensor.cuda()
+
+        with torch.no_grad():
+            z_i = self.transformer_model.get_embedding(
+                X_tensor, 
+                categorical_inds=[]  # or inferred if needed
+            )
         return z_i
 
     def _apply_temperature(self, logits: torch.Tensor) -> torch.Tensor:
